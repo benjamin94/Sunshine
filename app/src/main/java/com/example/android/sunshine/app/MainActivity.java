@@ -16,6 +16,7 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -32,9 +33,14 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
     private boolean mTwoPane;
     private String mLocation;
 
+    private WearableData receiverWearable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        receiverWearable = new WearableData();
+
         mLocation = Utility.getPreferredLocation(this);
 
         setContentView(R.layout.activity_main);
@@ -89,6 +95,10 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
     @Override
     protected void onResume() {
         super.onResume();
+
+        registerReceiver(receiverWearable,
+                new IntentFilter(WearableData.LOCAL_INTENT_FILTER_NAME));
+
         String location = Utility.getPreferredLocation( this );
         // update the location in our second pane using the fragment manager
             if (location != null && !location.equals(mLocation)) {
@@ -102,6 +112,15 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             }
             mLocation = location;
         }
+
+
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(receiverWearable);
+        super.onStop();
+
     }
 
     @Override

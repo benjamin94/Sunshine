@@ -2,6 +2,7 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,22 +75,6 @@ public class ForecastAdapter extends CursorAdapter {
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        int viewType = getItemViewType(cursor.getPosition());
-        switch (viewType) {
-            case VIEW_TYPE_TODAY: {
-                // Get weather icon
-                viewHolder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(
-                        cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)));
-                break;
-            }
-            case VIEW_TYPE_FUTURE_DAY: {
-                // Get weather icon
-                viewHolder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(
-                        cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)));
-                break;
-            }
-        }
-
         // Read date from cursor
         long dateInMillis = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
         // Find TextView and set formatted date on it
@@ -113,6 +98,31 @@ public class ForecastAdapter extends CursorAdapter {
         // Read low temperature from cursor
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
         viewHolder.lowTempView.setText(Utility.formatTemperature(context, low));
+
+        int viewType = getItemViewType(cursor.getPosition());
+        switch (viewType) {
+            case VIEW_TYPE_TODAY: {
+
+                // Get weather icon
+                int artResourceForWeatherCondition = Utility.getArtResourceForWeatherCondition(
+                        cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID));
+                viewHolder.iconView.setImageResource(artResourceForWeatherCondition);
+
+                Bundle data = new Bundle();
+                data.putDouble(WearableData.HIGH_TEMP,high);
+                data.putDouble(WearableData.LOW_TEMP,low);
+                data.putInt(WearableData.IMAGE,artResourceForWeatherCondition);
+                WearableData.sendBroadcast(context,data);
+
+                break;
+            }
+            case VIEW_TYPE_FUTURE_DAY: {
+                // Get weather icon
+                viewHolder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(
+                        cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)));
+                break;
+            }
+        }
     }
 
     public void setUseTodayLayout(boolean useTodayLayout) {
@@ -128,4 +138,6 @@ public class ForecastAdapter extends CursorAdapter {
     public int getViewTypeCount() {
         return VIEW_TYPE_COUNT;
     }
+
+
 }

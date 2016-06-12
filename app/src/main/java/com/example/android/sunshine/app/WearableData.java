@@ -70,7 +70,12 @@ public class WearableData extends BroadcastReceiver implements
         int imageResourceId = mBundle.getInt(IMAGE);
 
         Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), imageResourceId);
-        Asset asset = createAssetFromBitmap(bitmap);
+        Asset asset;
+        if (bitmap == null) {
+            bitmap = BitmapFactory.decodeResource(mContext.getResources(),
+                    R.drawable.art_clear);
+        }
+        asset = createAssetFromBitmap(bitmap);
 
         // Create a DataMap object and send it to the data layer
         DataMap dataMap = new DataMap();

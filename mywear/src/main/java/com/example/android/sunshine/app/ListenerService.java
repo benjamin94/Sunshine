@@ -52,9 +52,15 @@ public class ListenerService extends WearableListenerService {
 
                 Bitmap bitmap = loadBitmapFromAsset(profileAsset);
 
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
+                byte[] byteArray;
+
+                if (bitmap != null){
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byteArray = stream.toByteArray();
+                } else {
+                    byteArray = new byte[10];
+                }
 
                 Intent messageIntent = new Intent();
                 messageIntent.setAction(Intent.ACTION_SEND);

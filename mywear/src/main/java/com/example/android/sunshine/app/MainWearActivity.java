@@ -10,17 +10,8 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.Asset;
-import com.google.android.gms.wearable.Wearable;
-
-import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
 
 public class MainWearActivity extends WearableActivity {
 
@@ -64,35 +55,6 @@ public class MainWearActivity extends WearableActivity {
             mImageView.setImageBitmap(bitmap);
 
         }
-    }
-
-    public Bitmap loadBitmapFromAsset(Asset asset) {
-
-        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(getApplicationContext())
-                .addApi(Wearable.API)
-                .build();
-
-        googleApiClient.connect();
-
-        if (asset == null) {
-            throw new IllegalArgumentException("Asset must be non-null");
-        }
-        ConnectionResult result =
-                googleApiClient.blockingConnect(3000, TimeUnit.MILLISECONDS);
-        if (!result.isSuccess()) {
-            return null;
-        }
-        // convert asset into a file descriptor and block until it's ready
-        InputStream assetInputStream = Wearable.DataApi.getFdForAsset(
-                googleApiClient, asset).await().getInputStream();
-        googleApiClient.disconnect();
-
-        if (assetInputStream == null) {
-            Log.w(TAG, "Requested an unknown Asset.");
-            return null;
-        }
-        // decode the stream into a bitmap
-        return BitmapFactory.decodeStream(assetInputStream);
     }
 
 }

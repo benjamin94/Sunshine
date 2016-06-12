@@ -27,4 +27,5 @@
         android:id="@+id/imageView"
         android:layout_below="@+id/textClock2"
         android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>
